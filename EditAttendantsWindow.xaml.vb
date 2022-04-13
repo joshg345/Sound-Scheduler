@@ -8,6 +8,10 @@ Public Class EditAttendantsWindow
     Dim microphonescnt As New List(Of Integer)
     Dim sound As New List(Of String)
     Dim soundcnt As New List(Of Integer)
+    Dim avAttendant As New List(Of String)
+    Dim avAttendantCnt As New List(Of Integer)
+    Dim avOperator As New List(Of String)
+    Dim avOperatorCnt As New List(Of Integer)
     Dim platform As New List(Of String)
     Dim platformcnt As New List(Of Integer)
     Dim platformSun As New List(Of String)
@@ -18,6 +22,8 @@ Public Class EditAttendantsWindow
     Dim blacklistday As New List(Of String)
     Dim blacklistrole As New List(Of String)
     Dim soundList As ObservableCollection(Of ListViewItemTemplate)
+    Dim avAttendantList As ObservableCollection(Of ListViewItemTemplate)
+    Dim avOperatorList As ObservableCollection(Of ListViewItemTemplate)
     Dim microphonesList As ObservableCollection(Of ListViewItemTemplate)
     Dim platformList As ObservableCollection(Of ListViewItemTemplate)
     Dim platformSunList As ObservableCollection(Of ListViewItemTemplate)
@@ -102,6 +108,30 @@ Public Class EditAttendantsWindow
             SoundListView.ItemsSource = soundList
         Catch ex As Exception
             MsgBox("Error populating sound list view. Exception Message: " & ex.Message)
+        End Try
+
+        Try
+            ReadFile("AVattendant", avAttendant, avAttendantCnt,)
+            'soundList = New ObservableCollection(Of ListViewItemTemplate)()
+            avAttendantList = New ObservableCollection(Of ListViewItemTemplate)
+            For i As Integer = 0 To avAttendant.Count - 1
+                avAttendantList.Add(New ListViewItemTemplate(avAttendant(i), avAttendantCnt(i)))
+            Next
+            AVAttendantView.ItemsSource = avAttendantList
+        Catch ex As Exception
+            MsgBox("Error populating AVAttendant view. Exception Message: " & ex.Message)
+        End Try
+
+        Try
+            ReadFile("AVoperator", avOperator, avOperatorCnt,)
+            'soundList = New ObservableCollection(Of ListViewItemTemplate)()
+            avOperatorList = New ObservableCollection(Of ListViewItemTemplate)
+            For i As Integer = 0 To avOperator.Count - 1
+                avOperatorList.Add(New ListViewItemTemplate(avOperator(i), avOperatorCnt(i)))
+            Next
+            AVOperatorView.ItemsSource = avOperatorList
+        Catch ex As Exception
+            MsgBox("Error populating AVOperator view. Exception Message: " & ex.Message)
         End Try
 
         Try
@@ -198,6 +228,12 @@ Public Class EditAttendantsWindow
 
         For Each item In soundList.ToArray
             soundList.Remove(item)
+        Next
+        For Each item In avAttendantList.ToArray
+            avAttendantList.Remove(item)
+        Next
+        For Each item In avOperatorList.ToArray
+            avOperatorList.Remove(item)
         Next
         For Each item In microphonesList.ToArray
             microphonesList.Remove(item)

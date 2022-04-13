@@ -4,7 +4,6 @@ Imports System.Printing
 Imports System.Windows.Automation.Peers
 Imports System.Windows.Automation.Provider
 Imports System.Windows.Xps.Packaging
-Imports PdfSharp
 
 Class MainWindow
     Dim attendants As New List(Of String)
@@ -13,6 +12,10 @@ Class MainWindow
     Dim microphonescnt As New List(Of Integer)
     Dim sound As New List(Of String)
     Dim soundcnt As New List(Of Integer)
+    Dim avAttendant As New List(Of String)
+    Dim avAttendantCnt As New List(Of Integer)
+    Dim avOperator As New List(Of String)
+    Dim avOperatorCnt As New List(Of Integer)
     Dim platform As New List(Of String)
     Dim platformcnt As New List(Of Integer)
     Dim platformSun As New List(Of String)
@@ -21,6 +24,7 @@ Class MainWindow
     Dim attendantsElderscnt As New List(Of Integer)
     Dim backspaceFlag As Boolean = False
     Dim myCulture As System.Globalization.CultureInfo = Globalization.CultureInfo.CurrentCulture
+    Dim schedule As Page2
 
     Public Sub ReadFile(file As String, list As List(Of String), listcnt As List(Of Integer))
         Try
@@ -97,6 +101,8 @@ Class MainWindow
         frame.Content.ResetVisiblity()
         FillDateFields()
         SoundSelect()
+        AVAttendantSelect()
+        AVOperatorSelect()
         MicrophonesSelect()
         PlatformSelect()
         AttendantsSelect()
@@ -174,13 +180,17 @@ Class MainWindow
         soundcnt.Clear()
         ReadFile("sound", sound, soundcnt)
 
+
+        Dim avAttendantslabels = frame.Content.GetLabels("AVattendant")
+        Dim avOperatorlabels = frame.Content.GetLabels("AVoperator")
         Dim microphoneslabels = frame.Content.GetLabels("Microphones")
         Dim soundlabels = frame.Content.GetLabels("Sound")
         Dim attendantslabels = frame.Content.GetLabels("Attendants")
         Dim platformlabels = frame.Content.GetLabels("Platform")
         Dim carparklabels = frame.Content.GetLabels("CarPark")
         Dim dates = frame.Content.GetLabels("Date")
-        Dim Index As Integer = soundcnt.IndexOf(soundcnt.Min)
+        ' Dim Index As Integer = soundcnt.IndexOf(soundcnt.Min) - 1
+        Dim Index As Integer = soundcnt.Count - 1
         Dim soundfinal As New List(Of String)
 
         For i As Integer = 0 To 6
@@ -203,15 +213,18 @@ Class MainWindow
                 Index = soundcnt.IndexOf(soundcnt.Min)
                 Continue For
             Else
-                If Index = 5 Then
+                'If Index = 5 Then
+                '    Index = 0
+                '    soundfinal.Add(sound(Index))
+                '    UpdateCount("sound", Index)
+                '    sound.Clear()
+                '    soundcnt.Clear()
+                '    ReadFile("sound", sound, soundcnt)
+                '    Index = soundcnt.IndexOf(soundcnt.Min)
+                '    Continue For
+                'Else
+                If Index = soundcnt.Count - 1 Then
                     Index = 0
-                    soundfinal.Add(sound(Index))
-                    UpdateCount("sound", Index)
-                    sound.Clear()
-                    soundcnt.Clear()
-                    ReadFile("sound", sound, soundcnt)
-                    Index = soundcnt.IndexOf(soundcnt.Min)
-                    Continue For
                 Else
                     Index = Index + 1
                     soundfinal.Add(sound(Index))
@@ -233,12 +246,168 @@ Class MainWindow
 
     End Sub
 
+
+    Private Sub AVAttendantSelect()
+        RandomizeFile("AVattendant")
+        avAttendant.Clear()
+        avAttendantCnt.Clear()
+        ReadFile("AVattendant", avAttendant, avAttendantCnt)
+
+        Dim avAttendantslabels = frame.Content.GetLabels("AVattendant")
+        Dim avOperatorlabels = frame.Content.GetLabels("AVoperator")
+        Dim microphoneslabels = frame.Content.GetLabels("Microphones")
+        Dim soundlabels = frame.Content.GetLabels("Sound")
+        Dim attendantslabels = frame.Content.GetLabels("Attendants")
+        Dim platformlabels = frame.Content.GetLabels("Platform")
+        Dim carparklabels = frame.Content.GetLabels("CarPark")
+        Dim dates = frame.Content.GetLabels("Date")
+        Dim Index As Integer = avAttendantCnt.IndexOf(avAttendantCnt.Min)
+        Dim avAttendantfinal As New List(Of String)
+
+        For i As Integer = 0 To 6
+            Dim indi As Integer = 0
+
+            Dim dayOfWeek As DayOfWeek = myCulture.Calendar.GetDayOfWeek(dates(i).Content)
+            Dim blacklist As Boolean = CheckBlacklist(avAttendant(Index), myCulture.DateTimeFormat.GetDayName(dayOfWeek).ToUpper, "AVATTENDANT")
+
+            If blacklist = True Then
+                indi = 1
+            End If
+
+            If soundlabels(i).Content = avAttendant(Index) Then
+                indi = 1
+            End If
+
+            If indi = 0 Then
+                'update label
+                avAttendantfinal.Add(avAttendant(Index))
+                UpdateCount("AVattendant", Index)
+                avAttendant.Clear()
+                avAttendantCnt.Clear()
+                ReadFile("AVattendant", avAttendant, avAttendantCnt)
+                Index = avAttendantCnt.IndexOf(avAttendantCnt.Min)
+                Continue For
+            Else
+                'If Index = 5 Then
+                '    Index = 0
+                '    avAttendantfinal.Add(avAttendant(Index))
+                '    UpdateCount("AVattendant", Index)
+                '    avAttendant.Clear()
+                '    avAttendantCnt.Clear()
+                '    ReadFile("AVattendant", avAttendant, avAttendantCnt)
+                '    Index = avAttendantCnt.IndexOf(avAttendantCnt.Min)
+                '    Continue For
+                'Else
+                If Index = avAttendantCnt.Count - 1 Then
+                    Index = 0
+                Else
+                    Index = Index + 1
+                    avAttendantfinal.Add(avAttendant(Index))
+                    UpdateCount("AVattendant", Index)
+                    avAttendant.Clear()
+                    avAttendantCnt.Clear()
+                    ReadFile("AVattendant", avAttendant, avAttendantCnt)
+                    Index = avAttendantCnt.IndexOf(avAttendantCnt.Min)
+                    Continue For
+                End If
+            End If
+            'Loop
+
+        Next
+
+        If avAttendantfinal.Count > 0 Then
+            frame.Content.UpdateLabels("AVattendant", avAttendantfinal)
+        End If
+
+
+    End Sub
+
+    Private Sub AVOperatorSelect()
+        RandomizeFile("AVoperator")
+        avOperator.Clear()
+        avOperatorCnt.Clear()
+        ReadFile("AVoperator", avOperator, avOperatorCnt)
+
+        Dim avAttendantslabels = frame.Content.GetLabels("AVattendant")
+        Dim avOperatorlabels = frame.Content.GetLabels("AVoperator")
+        Dim microphoneslabels = frame.Content.GetLabels("Microphones")
+        Dim soundlabels = frame.Content.GetLabels("Sound")
+        Dim attendantslabels = frame.Content.GetLabels("Attendants")
+        Dim platformlabels = frame.Content.GetLabels("Platform")
+        Dim carparklabels = frame.Content.GetLabels("CarPark")
+        Dim dates = frame.Content.GetLabels("Date")
+        Dim Index As Integer = avOperatorCnt.IndexOf(avOperatorCnt.Min)
+        Dim avOperatorfinal As New List(Of String)
+
+        For i As Integer = 0 To 6
+            Dim indi As Integer = 0
+
+            Dim dayOfWeek As DayOfWeek = myCulture.Calendar.GetDayOfWeek(dates(i).Content)
+            Dim blacklist As Boolean = CheckBlacklist(avOperator(Index), myCulture.DateTimeFormat.GetDayName(dayOfWeek).ToUpper, "AVOPERATOR")
+
+            If blacklist = True Then
+                indi = 1
+            End If
+
+            If soundlabels(i).Content = avOperator(Index) Then
+                indi = 1
+            End If
+
+            If avAttendantslabels(i).Content = avOperator(Index) Then
+                indi = 1
+            End If
+
+            If indi = 0 Then
+                'update label
+                avOperatorfinal.Add(avOperator(Index))
+                UpdateCount("AVoperator", Index)
+                avOperator.Clear()
+                avOperatorCnt.Clear()
+                ReadFile("AVoperator", avOperator, avOperatorCnt)
+                Index = avOperatorCnt.IndexOf(avOperatorCnt.Min)
+                Continue For
+            Else
+                'If Index = 5 Then
+                '    Index = 0
+                '    avOperatorfinal.Add(avOperator(Index))
+                '    UpdateCount("AVoperator", Index)
+                '    avOperator.Clear()
+                '    avOperatorCnt.Clear()
+                '    ReadFile("AVoperator", avOperator, avOperatorCnt)
+                '    Index = avOperatorCnt.IndexOf(avOperatorCnt.Min)
+                '    Continue For
+                'Else
+                If Index = avOperatorCnt.Count - 1 Then
+                    Index = 0
+                Else
+                    Index = Index + 1
+                    avOperatorfinal.Add(avOperator(Index))
+                    UpdateCount("AVoperator", Index)
+                    avOperator.Clear()
+                    avOperatorCnt.Clear()
+                    ReadFile("AVoperator", avOperator, avOperatorCnt)
+                    Index = avOperatorCnt.IndexOf(avOperatorCnt.Min)
+                    Continue For
+                End If
+            End If
+            'Loop
+
+        Next
+
+        If avOperatorfinal.Count > 0 Then
+            frame.Content.UpdateLabels("AVoperator", avOperatorfinal)
+        End If
+
+    End Sub
+
     Private Sub MicrophonesSelect()
         RandomizeFile("microphones")
         microphones.Clear()
         microphonescnt.Clear()
         ReadFile("microphones", microphones, microphonescnt)
 
+        Dim avAttendantslabels = frame.Content.GetLabels("AVattendant")
+        Dim avOperatorlabels = frame.Content.GetLabels("AVoperator")
         Dim microphoneslabels = frame.Content.GetLabels("Microphones")
         Dim soundlabels = frame.Content.GetLabels("Sound")
         Dim attendantslabels = frame.Content.GetLabels("Attendants")
@@ -263,6 +432,14 @@ LOOPSTART:
             End If
 
             If soundlabels(i).Content = microphones(Index) Then
+                indi = 1
+            End If
+
+            If avAttendantslabels(i).Content = microphones(Index) Then
+                indi = 1
+            End If
+
+            If avOperatorlabels(i).Content = microphones(Index) Then
                 indi = 1
             End If
 
@@ -299,6 +476,14 @@ LOOPSTART2:
             End If
 
             If soundlabels(i).Content = microphones(Index) Then
+                indi = 1
+            End If
+
+            If avAttendantslabels(i).Content = microphones(Index) Then
+                indi = 1
+            End If
+
+            If avOperatorlabels(i).Content = microphones(Index) Then
                 indi = 1
             End If
 
@@ -343,6 +528,8 @@ LOOPSTART2:
         ReadFile("platform", platform, platformcnt)
         ReadFile("platformsun", platformSun, platformSuncnt)
 
+        Dim avAttendantslabels = frame.Content.GetLabels("AVattendant")
+        Dim avOperatorlabels = frame.Content.GetLabels("AVoperator")
         Dim microphoneslabels = frame.Content.GetLabels("Microphones")
         Dim soundlabels = frame.Content.GetLabels("Sound")
         Dim attendantslabels = frame.Content.GetLabels("Attendants")
@@ -370,6 +557,14 @@ LOOPSTART:
                 End If
 
                 If soundlabels(i).Content = platformSun(IndexSun) Then
+                    indi = 1
+                End If
+
+                If avAttendantslabels(i).Content = platformSun(IndexSun) Then
+                    indi = 1
+                End If
+
+                If avOperatorlabels(i).Content = platformSun(IndexSun) Then
                     indi = 1
                 End If
 
@@ -416,6 +611,14 @@ LOOPSTART:
                     indi = 1
                 End If
 
+                If avAttendantslabels(i).Content = platform(Index) Then
+                    indi = 1
+                End If
+
+                If avOperatorlabels(i).Content = platform(Index) Then
+                    indi = 1
+                End If
+
                 If microphoneslabels(loopind).Content = platform(Index) Then
                     indi = 1
                 End If
@@ -459,6 +662,14 @@ LOOPSTART2:
             End If
 
             If soundlabels(i).Content = platform(Index) Then
+                indi = 1
+            End If
+
+            If avAttendantslabels(i).Content = platform(Index) Then
+                indi = 1
+            End If
+
+            If avOperatorlabels(i).Content = platform(Index) Then
                 indi = 1
             End If
 
@@ -519,6 +730,8 @@ LOOPSTART2:
         ReadFile("attendants", attendants, attendantscnt)
         ReadFile("attendantselders", attendantsElders, attendantsElderscnt)
 
+        Dim avAttendantslabels = frame.Content.GetLabels("AVattendant")
+        Dim avOperatorlabels = frame.Content.GetLabels("AVoperator")
         Dim microphoneslabels = frame.Content.GetLabels("Microphones")
         Dim soundlabels = frame.Content.GetLabels("Sound")
         Dim attendantslabels = frame.Content.GetLabels("Attendants")
@@ -554,6 +767,14 @@ LOOPSTART:
             'End If
 
             If soundlabels(i).Content = attendantsElders(IndexElders) Then
+                indi = 1
+            End If
+
+            If avAttendantslabels(i).Content = attendantsElders(IndexElders) Then
+                indi = 1
+            End If
+
+            If avOperatorlabels(i).Content = attendantsElders(IndexElders) Then
                 indi = 1
             End If
 
@@ -606,6 +827,14 @@ LOOPSTART2:
             End If
 
             If soundlabels(i).Content = attendants(Index) Then
+                indi = 1
+            End If
+
+            If avAttendantslabels(i).Content = attendants(Index) Then
+                indi = 1
+            End If
+
+            If avOperatorlabels(i).Content = attendants(Index) Then
                 indi = 1
             End If
 
@@ -697,25 +926,20 @@ LOOPSTART2:
     End Sub
 
     Private Sub Button_Click(sender As Object, e As RoutedEventArgs) Handles SaveImageButton.Click
-        'SaveUsingEncoder("soundschedule.png", frame, New JpegBitmapEncoder())
-        'MsgBox("Image saved!")
         Try
-            Dim lMemoryStream As MemoryStream = New MemoryStream()
-            Dim package As Package = Package.Open(lMemoryStream, FileMode.Create)
-            Dim doc As XpsDocument = New XpsDocument(package)
-            Dim writer = XpsDocument.CreateXpsDocumentWriter(doc)
-            writer.Write(frame)
-            doc.Close()
-            package.Close()
-            Dim pdfXpsDoc = Xps.XpsModel.XpsDocument.Open(lMemoryStream)
-            Xps.XpsConverter.Convert(pdfXpsDoc, "sound-schedule.pdf", 0)
+            Dim xpsDoc As New XpsDocument("sound-schedule.xps", IO.FileAccess.ReadWrite)
+            Dim XpsDocWriter As Xps.XpsDocumentWriter = XpsDocument.CreateXpsDocumentWriter(xpsDoc)
+            XpsDocWriter.Write(frame.Content.myPage2)
+            xpsDoc.Close()
+            PdfSharp.Xps.XpsConverter.Convert("sound-schedule.xps", "sound-schedule.pdf", 0)
             MsgBox("PDF file saved!")
+            My.Computer.FileSystem.DeleteFile("sound-schedule.xps")
         Catch ex As Exception
             MsgBox("Error trying to export to PDF. Error message: " & ex.Message)
         End Try
     End Sub
 
-    Private Sub PrintButton_Click(sender As Object, e As RoutedEventArgs) Handles PrintButton.Click
+    Private Sub PrintButton_Click(sender As Object, e As RoutedEventArgs)
         Try
             Dim printdlg As New PrintDialog
             printdlg.PrintTicket.PageOrientation = Printing.PageOrientation.Landscape
@@ -796,6 +1020,19 @@ LOOPSTART2:
             File.Create("blacklist.txt").Dispose()
             'Me.Close()
         End If
+
+        If Not File.Exists("AVattendant.txt") Then
+            'MsgBox("blacklist.txt file cannot be found! Please move blacklist.txt to the directory of the .exe file!")
+            File.Create("AVattendant.txt").Dispose()
+            'Me.Close()
+        End If
+
+        If Not File.Exists("AVoperator.txt") Then
+            'MsgBox("blacklist.txt file cannot be found! Please move blacklist.txt to the directory of the .exe file!")
+            File.Create("AVoperator.txt").Dispose()
+            'Me.Close()
+        End If
+
 
     End Sub
 

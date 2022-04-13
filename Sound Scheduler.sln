@@ -1,9 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.27703.2042
+# Visual Studio Version 17
+VisualStudioVersion = 17.1.32319.34
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "Sound Scheduler", "Sound Scheduler\Sound Scheduler.vbproj", "{A5CAAC42-1EE1-4390-B6B7-CB69A0218F4A}"
+Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "Sound Scheduler", "Sound Scheduler.vbproj", "{A5CAAC42-1EE1-4390-B6B7-CB69A0218F4A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -20,6 +20,6 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {885EEEB6-4C27-4431-A6CA-15D01F4791E6}
+		SolutionGuid = {733DC1FA-1A0D-4EBD-91EB-58835E8E90B5}
 	EndGlobalSection
 EndGlobal

@@ -5,12 +5,36 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Sound_Scheduler"
         mc:Ignorable="d"
-        Title="Edit Attendants" Height="450" Width="708" ResizeMode="NoResize" WindowStartupLocation="CenterScreen">
+        Title="Edit Attendants" Height="450" Width="1000" ResizeMode="NoResize" WindowStartupLocation="CenterScreen">
     <Grid Margin="0,0,0,-8">
         <DockPanel LastChildFill="False" Margin="0,0,0,63">
-            <TabControl x:Name="FileTabControl" HorizontalAlignment="Left" Height="355" VerticalAlignment="Top" Width="694">
+            <TabControl x:Name="FileTabControl" HorizontalAlignment="Left" Height="355" VerticalAlignment="Top" Width="1000">
                 <TabItem x:Name="SoundTab" Header="Sound" FontSize="16.5" Margin="-2,0">
                     <ListView x:Name="SoundListView" Margin="0,0,0,3" Foreground="#FF632F63">
+                        <ListView.View>
+                            <GridView>
+                                <GridViewColumn Header="Name" DisplayMemberBinding="{Binding Path=Name}" />
+                                <GridViewColumn Header="Count" DisplayMemberBinding="{Binding Path=Count}"/>
+                            </GridView>
+                        </ListView.View>
+
+                    </ListView>
+
+                </TabItem>
+                <TabItem x:Name="AVAttendantTab" Header="AV Attendant" FontSize="16.5" Margin="-2,0">
+                    <ListView x:Name="AVAttendantView" Margin="0,0,0,3" Foreground="#FF632F63">
+                        <ListView.View>
+                            <GridView>
+                                <GridViewColumn Header="Name" DisplayMemberBinding="{Binding Path=Name}" />
+                                <GridViewColumn Header="Count" DisplayMemberBinding="{Binding Path=Count}"/>
+                            </GridView>
+                        </ListView.View>
+
+                    </ListView>
+
+                </TabItem>
+                <TabItem x:Name="AVOperatorTab" Header="AV Operator" FontSize="16.5" Margin="-2,0">
+                    <ListView x:Name="AVOperatorView" Margin="0,0,0,3" Foreground="#FF632F63">
                         <ListView.View>
                             <GridView>
                                 <GridViewColumn Header="Name" DisplayMemberBinding="{Binding Path=Name}" />
